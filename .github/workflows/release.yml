@@ -1,0 +1,55 @@
+name: Release
+
+# Mechanics only, for now — this project is nowhere near a real release.
+# Pushing a tag like v0.0.1 builds the Windows installers and attaches them
+# to a DRAFT GitHub Release (never auto-published) so a human always reviews
+# before anyone downloads it. See README's "Downloading and installing"
+# section for what the end user does once a release is actually published.
+on:
+  push:
+    tags:
+      - "v*"
+
+# tauri-action needs write access to create the (draft) release and upload
+# assets. Newer orgs/repos default the GITHUB_TOKEN to read-only, so this
+# has to be requested explicitly — without it the create-release call 403s
+# with "Resource not accessible by integration" after the build succeeds.
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry + build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: cargo test (don't ship a build the engine tests wouldn't pass)
+        working-directory: src-tauri
+        run: cargo test --locked
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "CryptoTracker ${{ github.ref_name }}"
+          releaseBody: |
+            Automated build from tag ${{ github.ref_name }}. Draft only —
+            review before publishing. Not a real release; see
+            crypto-tracker-rough-plan.md for what's still ahead.
+          releaseDraft: true
+          prerelease: true

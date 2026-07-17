@@ -1,0 +1,32 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Claude Code: personal settings/session state, not shared project config
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# Real names for local seed data (see src-tauri/local_seed_overrides.example.json)
+# -- never commit the real one, this repo is public.
+src-tauri/local_seed_overrides.json

@@ -1,0 +1,8 @@
+[env]
+# `cargo test` writes TS bindings for every #[ts(export)] type here.
+# Path is relative to src-tauri/ (the crate root), so this lands in src/bindings/.
+TS_RS_EXPORT_DIR = { value = "../src/bindings", relative = true }
+# Default binding for i64/u64 is `bigint`, which JSON (and thus the IPC
+# boundary) can't carry. Our ids are small autoincrement counters, nowhere
+# near 2^53, so plain `number` is safe and avoids BigInt friction in React.
+TS_RS_LARGE_INT = "number"

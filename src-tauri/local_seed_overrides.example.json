@@ -1,0 +1,7 @@
+{
+  "_comment": "Copy this to local_seed_overrides.json (gitignored, never commit it) and fill in real values for local testing. Any key you omit falls back to the placeholder name in seed.rs. Delete cryptotracker.sqlite and relaunch the app to reseed after changing this.",
+  "Business LLC": "Example Holdings LLC",
+  "Business": "Example Holdings",
+  "Tangem — Card A": "Tangem — Alex",
+  "Tangem — Card B": "Tangem — Sam"
+}

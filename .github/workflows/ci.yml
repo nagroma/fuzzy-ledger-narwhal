@@ -1,0 +1,43 @@
+name: CI
+
+# The cheap, fast checks that should run on every push/PR: the lot-engine
+# tests (the part that actually matters — see lots.rs) and a frontend
+# typecheck/build. No installer bundling here; that's release.yml, and it's
+# an order of magnitude slower.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  rust-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry + build artifacts
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: cargo test (lot engine + ts-rs binding export)
+        working-directory: src-tauri
+        run: cargo test --locked
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck + build
+        run: npm run build
